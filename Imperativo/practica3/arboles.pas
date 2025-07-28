@@ -71,6 +71,19 @@ begin
 	end;
 end;
 
+function buscarLegajo(n : nodo; leg : integer) : nodo;
+begin
+	if (n = nil) then buscarLegajo := nil
+	else begin
+		if (n^.leg = leg) then buscarLegajo := n
+		else begin
+			if (n^.leg >= leg) then buscarLegajo := buscarLegajo(n^.HI,leg)
+			else buscarLegajo := buscarLegajo(n^.HD,leg);
+		end;
+	end;
+end;
+
+
 procedure agregarNodo(var n : nodo; leg : integer; e : examen);
 begin
 	if (n = nil) then begin
@@ -106,15 +119,20 @@ var
 	arbolito : nodo;
 	leg : integer;
 	e : examen;
+	nodoAlumno : nodo;
 	
 BEGIN
 	arbolito := nil;
 	leerLegajo(leg);
 	while (leg <> 0) do begin
 		leerExamen(e);
-		agregarNodo(arbolito, leg, e);
+		nodoAlumno := buscarLegajo(arbolito, leg);
+		
+		if (nodoAlumno <> nil) then agregarAdelante(nodoAlumno^.examenes, e)
+		else agregarNodo(arbolito, leg, e);
+		
 		leerLegajo(leg);
-	end;	
+	end;
 	
 	listarFinalesAprobadosPorAlumno(arbolito);
 END.
