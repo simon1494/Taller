@@ -8,7 +8,7 @@ type
 	lista = ^emisorL;
 	
 	emisorA = record
-		dni      : integer;
+		dni      : longint;
 		suma_cant: integer;
 		suma_peso: real;
 		HI     : arbol;
@@ -16,7 +16,7 @@ type
 	end;
 	
 	emisorL = record
-		dni      : integer;
+		dni      : LongInt;
 		suma_cant: integer;
 		suma_peso: real;
 		sig     : lista;
@@ -24,8 +24,8 @@ type
 
 	paquete = record
 		cod      : integer;
-		dni_emi  : integer;
-		dni_rec  : integer;
+		dni_emi  : LongInt;
+		dni_rec  : LongInt;
 		peso     : real;
 		cant     : integer;
 	end;
@@ -42,7 +42,7 @@ begin
 end;
 
 
-function buscarEmisor(a : arbol; dni : integer) : arbol;
+function buscarEmisor(a : arbol; dni : LongInt) : arbol;
 begin	
 	if a = nil then buscarEmisor := nil
 	else if a^.dni = dni then buscarEmisor := a
@@ -50,7 +50,7 @@ begin
 	else buscarEmisor := buscarEmisor(a^.HD, dni);
 end;
 
-procedure existeEmisor(a : arbol; dni : integer);
+procedure existeEmisor(a : arbol; dni : LongInt);
 var buscado:arbol;
 begin	
 	buscado := buscarEmisor(a,dni);
@@ -161,7 +161,7 @@ var p : paquete; nodoEmisor: arbol;
 begin
 
 	p.cod := 0;
-	p.dni_emi :=  123;
+	p.dni_emi :=  38017708;
 	p.dni_rec := 456;
 	p.peso := 52.3;
 	p.cant := 2;
@@ -268,7 +268,7 @@ BEGIN
 	existeEmisor(a, 789);
 	
 	writeln();
-	existeEmisor(a, 987);
+	existeEmisor(a, 38017708);
 	
 	
 END.
