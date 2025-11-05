@@ -16,10 +16,16 @@ procedure crearLista(var nodoI: nodo);
 
 var
   nodoI: nodo;
+  str1, str2: String;
 
 BEGIN
   
-  crearLista(nodoI);
+  str1:='buenas';
+  str2:='Alo';
+  
+  if (str1 > str2) then writeln('es verdad')
+  else writeln('nope');
+	  
 	
 END.
 
