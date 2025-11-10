@@ -1,0 +1,153 @@
+programa ejemplo
+procesos
+  proceso informarGanador(E id:numero)
+  comenzar
+    Informar(id) 
+  fin
+  proceso buscarPapel(ES terminar:boolean)
+  variables
+    avR, caR: numero
+  comenzar
+    Random(avR,11,15)
+    Random(caR,11,15)
+    Pos(avR,caR)
+    si HayPapelEnLaEsquina
+      tomarPapel
+      BloquearEsquina(18,13)
+      Pos(18,13)
+      depositarPapel
+      Pos(3,3)
+      LiberarEsquina(18,13)
+      terminar := V   
+  fin
+  proceso buscarFlor(ES terminar:boolean)
+  variables
+    avR, caR: numero
+  comenzar
+    Random(avR,21,25)
+    Random(caR,11,15)
+    Pos(avR,caR)
+    si HayFlorEnLaEsquina
+      tomarFlor
+      BloquearEsquina(18,13)
+      Pos(18,13)
+      depositarFlor
+      Pos(2,2)
+      LiberarEsquina(18,13)
+      terminar := V    
+  fin
+  proceso juntarPapelesFuente
+  variables
+    avR, caR: numero
+  comenzar
+    repetir (1)
+      Random(avR,11,15)
+      Random(caR,11,15)
+      BloquearEsquina(18,13)
+      Pos(18,13)
+      tomarPapel
+      Pos(avR,caR)
+      LiberarEsquina(18,13)
+      depositarPapel 
+  fin
+  proceso juntarFloresFuente
+  variables
+    avR, caR: numero
+  comenzar
+    repetir (1)
+      Random(avR,21,25)
+      Random(caR,11,15)
+      BloquearEsquina(18,13)
+      Pos(18,13)
+      tomarFlor
+      Pos(avR,caR)
+      LiberarEsquina(18,13)
+      depositarFlor 
+  fin
+areas
+  aPapelera: AreaPC (11,11,15,15)
+  aFlorera: AreaPC (21,11,25,15)
+  fuente: AreaPC (18,13,18,13)
+  aFis: AreaP (1,1,1,1)
+  aPap: AreaP (2,2,2,2)
+  aFlo: AreaP (3,3,3,3)
+robots
+  robot papelero
+  variables
+    id: numero
+    terminar: boolean
+  comenzar
+    id := 1
+    terminar := F
+    juntarPapelesFuente
+    Pos(2,2)
+    EnviarMensaje(V, fis)
+    RecibirMensaje(terminar, fis)
+    mientras (~terminar)
+      buscarFlor(terminar)
+      EnviarMensaje(id, fis)
+      EnviarMensaje(terminar, fis)
+      RecibirMensaje(terminar, fis)
+  fin
+  robot florero
+  variables
+    id: numero
+    terminar: boolean
+  comenzar
+    id := 2
+    terminar := F
+    juntarFloresFuente
+    Pos(3,3)
+    EnviarMensaje(V, fis)
+    RecibirMensaje(terminar, fis)
+    mientras (~terminar)
+      buscarPapel(terminar)
+      EnviarMensaje(id, fis)
+      EnviarMensaje(terminar, fis)
+      RecibirMensaje(terminar, fis)
+  fin
+  robot fiscal
+  variables
+    terminar: boolean
+    id: numero
+  comenzar
+    repetir 2
+      RecibirMensaje(terminar, *)
+    terminar := F
+    EnviarMensaje(terminar, flo)
+    EnviarMensaje(terminar, pa)
+    mientras (~terminar)
+      RecibirMensaje(id, *)
+      si (id = 1)
+        RecibirMensaje(terminar, pa)
+        EnviarMensaje(terminar, pa)
+      sino
+        RecibirMensaje(terminar, flo)
+        EnviarMensaje(terminar, flo)
+    informarGanador(id)
+    RecibirMensaje(id, *)
+    si (id = 1)
+      RecibirMensaje(terminar, pa)
+      EnviarMensaje(V, pa)
+    sino
+      RecibirMensaje(terminar, flo)
+      EnviarMensaje(V, flo)
+  fin
+variables
+  pa: papelero
+  flo: florero
+  fis: fiscal
+comenzar
+  AsignarArea(pa, aPapelera)
+  AsignarArea(pa, aFlorera)
+  AsignarArea(flo, aPapelera)
+  AsignarArea(flo, aFlorera)
+  AsignarArea(pa, fuente)
+  AsignarArea(flo, fuente)
+  AsignarArea(pa, aPap)
+  AsignarArea(flo, aFlo)
+  AsignarArea(fis, aFis)
+  Iniciar(fis, 1,1)
+  Iniciar(pa, 2,2)
+  Iniciar(flo, 3,3)
+fin

@@ -1,0 +1,168 @@
+programa final_junio
+procesos
+  proceso avisarBuscador(E id: numero)
+  comenzar
+    si (id = 1)
+      EnviarMensaje(V, bus1) {equipo Flor}
+    sino
+      EnviarMensaje(V, bus2) {equipo Papel}
+  fin
+  proceso tomarPosta(E id: numero)
+  variables
+    posta :boolean
+  comenzar
+    si (id = 1)
+      RecibirMensaje(posta, esc1) {equipo Flor}
+    sino
+      RecibirMensaje(posta, esc2) {equipo Papel}
+  fin
+  proceso lugaresInicio(ES av: numero; ES ca:numero)
+  comenzar
+    av := PosAv
+    ca := PosCa
+  fin
+  proceso esconderFlores(E avI: numero; E caI: numero)
+  variables
+    av, ca: numero    
+  comenzar
+    repetir 2
+      Random(av, 1 ,5)
+      Random(ca, 1, 5)
+      BloquearEsquina(av, ca)
+      Pos(av, ca)
+      depositarFlor
+      Pos(avI, caI)
+      LiberarEsquina(av, ca)
+  fin
+  proceso esconderPapeles(E avI: numero; E caI: numero)
+  variables
+    av, ca: numero    
+  comenzar
+    repetir 2
+      Random(av, 1 ,5)
+      Random(ca, 1, 5)
+      BloquearEsquina(av, ca)
+      Pos(av, ca)
+      depositarPapel
+      Pos(avI, caI)
+      LiberarEsquina(av, ca)
+  fin
+  proceso buscarFlores(E avI: numero; E caI: numero; ES c: numero)
+  variables
+    av, ca: numero    
+  comenzar
+    Random(av, 1 ,5)
+    Random(ca, 1, 5)
+    BloquearEsquina(av, ca)
+    Pos(av, ca)
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      c := c + 1
+    Pos(avI, caI)
+    LiberarEsquina(av, ca)
+  fin
+  proceso buscarPapeles(E avI: numero; E caI: numero; ES c: numero)
+  variables
+    av, ca: numero    
+  comenzar
+    Random(av, 1 ,5)
+    Random(ca, 1, 5)
+    BloquearEsquina(av, ca)
+    Pos(av, ca)
+    si (HayPapelEnLaEsquina)
+      tomarPapel
+      c := c + 1
+    Pos(avI, caI)
+    LiberarEsquina(av, ca)
+  fin
+areas
+  iFis: AreaP (6,5,6,5)
+  iEsc1: AreaP (6,1,6,1)
+  iBus1: AreaP (6,2,6,2)
+  iEsc2: AreaP (6,3,6,3)
+  iBus2: AreaP (6,4,6,4)
+  playground: AreaP(1,1,5,5)
+robots
+  robot escondedor
+  variables
+    id, avI, caI: numero
+  comenzar
+    RecibirMensaje(id, fis)
+    lugaresInicio(avI, caI)
+    si (id = 1)
+      esconderFlores(avI, caI)
+    sino
+      esconderPapeles(avI, caI)
+    avisarBuscador(id)
+  fin
+  robot buscador
+  variables
+    contador, id, avI, caI: numero
+    seguir: boolean
+  comenzar
+    contador := 0
+    RecibirMensaje(id, fis)
+    lugaresInicio(avI, caI)
+    tomarPosta(id)
+    seguir := V
+    mientras (seguir)
+      si (id = 1)
+        buscarFlores(avI, caI, contador)
+      sino
+        buscarPapeles(avI, caI, contador)
+      si (contador = 30)
+        seguir := F
+      EnviarMensaje(id, fis)
+      EnviarMensaje(seguir, fis)
+      RecibirMensaje(seguir, fis) 
+  fin
+  robot fiscal
+  variables
+    ganador, equipo_id: numero
+    seguir: boolean
+  comenzar
+    seguir:=V
+    EnviarMensaje(1, esc1)
+    EnviarMensaje(1,bus1)
+    EnviarMensaje(2, esc2)
+    EnviarMensaje(2, bus2)
+    mientras (seguir)
+      RecibirMensaje(equipo_id, *)
+      si (equipo_id = 1)
+        RecibirMensaje(seguir, bus1)
+        EnviarMensaje(seguir, bus1)
+      sino
+        RecibirMensaje(seguir, bus2)
+        EnviarMensaje(seguir, bus2)
+    ganador := equipo_id
+    RecibirMensaje(equipo_id, *)
+    si (equipo_id = 1)
+      RecibirMensaje(seguir, bus1)
+      EnviarMensaje(F, bus1)
+    sino
+      RecibirMensaje(seguir, bus2)
+      EnviarMensaje(F, bus2)
+    Informar('El equipo ganador fue', ganador)
+  fin
+variables
+  esc1: escondedor
+  bus1: buscador
+  esc2: escondedor
+  bus2: buscador
+  fis: fiscal
+comenzar
+  AsignarArea(esc1, playground)
+  AsignarArea(esc2, playground)
+  AsignarArea(bus1, playground)
+  AsignarArea(bus2, playground)
+  AsignarArea(fis, iFis)
+  AsignarArea(esc1, iEsc1)
+  AsignarArea(esc2, iEsc2)
+  AsignarArea(bus1, iBus1)
+  AsignarArea(bus2, iBus2)
+  Iniciar(fis,6,5)
+  Iniciar(esc1,6,1)
+  Iniciar(bus1,6,2)
+  Iniciar(esc2,6,3)
+  Iniciar(bus2,6,4)
+fin
